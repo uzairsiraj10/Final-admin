@@ -1,0 +1,11 @@
+[install]
+# Use exact versions for dependencies
+exact = true
+
+[test]
+# Use Jest-like test runner
+preload = "./setup-tests.ts"
+
+[debug]
+# Enable source maps
+sourcemap = true 

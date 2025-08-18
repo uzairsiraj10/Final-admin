@@ -1,0 +1,92 @@
+// This is your Prisma schema file
+// Learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  customer
+  labour
+  admin
+}
+
+enum BookingStatus {
+  pending
+  accepted
+  in_progress
+  completed
+  cancelled
+}
+
+model User {
+  id            Int      @id @default(autoincrement())
+  email         String   @unique
+  password_hash String
+  role          UserRole
+  name          String
+  phone         String?
+  avatar_url    String?  @db.VarChar(500)
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  // Relations
+  labour_profile  LabourProfile?
+  customer_bookings Booking[]    @relation("CustomerBookings")
+  labour_bookings   Booking[]    @relation("LabourBookings")
+}
+
+model Category {
+  id          Int      @id @default(autoincrement())
+  name        String
+  name_urdu   String?
+  icon        String?
+  description String?  @db.Text
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+
+  // Relations
+  labour_profiles LabourProfile[]
+  bookings       Booking[]
+}
+
+model LabourProfile {
+  id              Int      @id @default(autoincrement())
+  user_id         Int      @unique
+  category_id     Int
+  experience_years Int?
+  hourly_rate     Decimal  @db.Decimal(10, 2)
+  description     String?  @db.Text
+  skills          Json?
+  location        Json?
+  is_verified     Boolean  @default(false)
+  rating          Decimal  @default(0) @db.Decimal(3, 2)
+  total_reviews   Int      @default(0)
+
+  // Relations
+  user     User     @relation(fields: [user_id], references: [id])
+  category Category @relation(fields: [category_id], references: [id])
+}
+
+model Booking {
+  id             Int           @id @default(autoincrement())
+  customer_id    Int
+  labour_id      Int
+  category_id    Int
+  status         BookingStatus @default(pending)
+  scheduled_date DateTime
+  description    String?       @db.Text
+  total_amount   Decimal       @db.Decimal(10, 2)
+  created_at     DateTime      @default(now())
+
+  // Relations
+  customer User     @relation("CustomerBookings", fields: [customer_id], references: [id])
+  labour   User     @relation("LabourBookings", fields: [labour_id], references: [id])
+  category Category @relation(fields: [category_id], references: [id])
+}
