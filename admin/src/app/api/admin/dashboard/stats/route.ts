@@ -31,22 +31,22 @@ export async function GET() {
       query("SELECT COALESCE(SUM(amount), 0) as total FROM bookings WHERE payment_status = 'paid' AND created_at < DATE_SUB(NOW(), INTERVAL 1 MONTH)"),
     ]);
 
-    const currentUsers = usersResult[0]?.count || 0;
-    const currentLabour = labourResult[0]?.count || 0;
-    const currentBookings = bookingsResult[0]?.count || 0;
-    const currentRevenue = revenueResult[0]?.total || 0;
+    const currentUsers = parseInt(usersResult[0]?.count || 0);
+    const currentLabour = parseInt(labourResult[0]?.count || 0);
+    const currentBookings = parseInt(bookingsResult[0]?.count || 0);
+    const currentRevenue = parseFloat(revenueResult[0]?.total || 0);
 
-    const prevUsers = prevUsersResult[0]?.count || 0;
-    const prevLabour = prevLabourResult[0]?.count || 0;
-    const prevBookings = prevBookingsResult[0]?.count || 0;
-    const prevRevenue = prevRevenueResult[0]?.total || 0;
+    const prevUsers = parseInt(prevUsersResult[0]?.count || 0);
+    const prevLabour = parseInt(prevLabourResult[0]?.count || 0);
+    const prevBookings = parseInt(prevBookingsResult[0]?.count || 0);
+    const prevRevenue = parseFloat(prevRevenueResult[0]?.total || 0);
 
     const stats = {
       totalUsers: currentUsers,
       totalLabour: currentLabour,
       totalBookings: currentBookings,
       totalRevenue: currentRevenue,
-      totalReferrals: referralsResult[0]?.count || 0,
+      totalReferrals: parseInt(referralsResult[0]?.count || 0),
       userGrowth: prevUsers > 0 ? ((currentUsers - prevUsers) / prevUsers) * 100 : 0,
       labourGrowth: prevLabour > 0 ? ((currentLabour - prevLabour) / prevLabour) * 100 : 0,
       bookingGrowth: prevBookings > 0 ? ((currentBookings - prevBookings) / prevBookings) * 100 : 0,

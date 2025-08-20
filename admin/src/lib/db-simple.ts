@@ -16,17 +16,26 @@ const dbConfig = {
 };
 
 async function getConnection(): Promise<mysql.Connection> {
-  // Always create a fresh connection to avoid connection limit issues
-  // This ensures we don't hold onto stale connections
+  // Reuse existing connection if available and still connected
   if (connection) {
     try {
-      await connection.end();
+      // Test if connection is still alive with a simple query
+      await connection.query('SELECT 1');
+      return connection;
     } catch (error) {
-      // Ignore errors when closing old connection
+      // Connection is dead, clean it up
+      console.log('[DB] Existing connection is dead, creating new one...');
+      try {
+        await connection.end();
+      } catch (closeError) {
+        // Ignore errors when closing dead connection
+      }
+      connection = null;
+      connectionPromise = null;
     }
-    connection = null;
   }
 
+  // If there's already a connection being created, wait for it
   if (connectionPromise) {
     return connectionPromise;
   }
@@ -43,8 +52,10 @@ async function getConnection(): Promise<mysql.Connection> {
     // Handle connection errors
     connection.on('error', (err: any) => {
       console.error('Database connection error:', err);
-      connection = null;
-      connectionPromise = null;
+      if (err.code === 'PROTOCOL_CONNECTION_LOST' || err.code === 'ECONNRESET') {
+        connection = null;
+        connectionPromise = null;
+      }
     });
     
     return connection;
@@ -63,9 +74,8 @@ export async function query<T = any>(
   let delay = 1000; // Start with shorter delay
   
   for (let attempt = 1; attempt <= retries; attempt++) {
-    let conn: mysql.Connection | null = null;
     try {
-      conn = await getConnection();
+      const conn = await getConnection();
       
       // Execute query with timeout
       const [results] = await Promise.race([
@@ -75,22 +85,17 @@ export async function query<T = any>(
         )
       ]) as any;
       
-      // Close connection immediately after successful query
-      await conn.end();
-      connection = null;
-      
+      // Keep connection alive for reuse - don't close it
       return results as T[];
     } catch (error: any) {
-      // Clean up connection on error
-      if (conn) {
-        try {
-          await conn.end();
-        } catch (closeError) {
-          // Ignore close errors
-        }
+      // Only reset connection state on connection-related errors
+      if (error.code === 'PROTOCOL_CONNECTION_LOST' || 
+          error.code === 'ECONNRESET' || 
+          error.code === 'ER_TOO_MANY_USER_CONNECTIONS' ||
+          error.message?.includes('timeout')) {
+        connection = null;
+        connectionPromise = null;
       }
-      connection = null;
-      connectionPromise = null;
       
       console.error(`Database query error (attempt ${attempt}/${retries}):`, {
         error: error.message,

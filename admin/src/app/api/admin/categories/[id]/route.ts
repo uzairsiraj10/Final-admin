@@ -51,7 +51,7 @@ export async function PUT(
     // Check if name is already taken by another category
     if (name) {
       const nameCheck = await query(
-        "SELECT id FROM categories WHERE name = ? AND id != ?",
+        "SELECT id FROM categories WHERE name_en = ? AND id != ?",
         [name, id]
       );
       if (nameCheck.length > 0) {

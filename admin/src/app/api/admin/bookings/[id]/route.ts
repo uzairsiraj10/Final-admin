@@ -14,7 +14,7 @@ export async function GET(
         u.name as customer_name,
         u.email as customer_email,
         lp.name as labour_name,
-        c.name as category_name
+        c.name_en as category_name
       FROM bookings b
       LEFT JOIN users u ON b.customer_id = u.id
       LEFT JOIN labour_profiles lp ON b.labour_id = lp.id
@@ -96,7 +96,7 @@ export async function PUT(
           { status: 400 }
         );
       }
-      updateFields.push("scheduled_date = ?");
+      updateFields.push("booking_date = ?");
       updateValues.push(scheduled_date);
     }
     if (amount !== undefined) {
@@ -104,13 +104,10 @@ export async function PUT(
       updateValues.push(amount);
     }
     if (description !== undefined) {
-      updateFields.push("description = ?");
+      updateFields.push("notes = ?"); // Store description in notes column
       updateValues.push(description);
     }
-    if (address !== undefined) {
-      updateFields.push("address = ?");
-      updateValues.push(address);
-    }
+    // Note: address field is ignored as it doesn't exist in bookings table
 
     updateFields.push("updated_at = CURRENT_TIMESTAMP");
     updateQuery += updateFields.join(", ") + " WHERE id = ?";
@@ -124,7 +121,7 @@ export async function PUT(
         u.name as customer_name,
         u.email as customer_email,
         lp.name as labour_name,
-        c.name as category_name
+        c.name_en as category_name
       FROM bookings b
       LEFT JOIN users u ON b.customer_id = u.id
       LEFT JOIN labour_profiles lp ON b.labour_id = lp.id

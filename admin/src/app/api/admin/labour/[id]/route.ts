@@ -9,7 +9,7 @@ export async function GET(
   try {
     const { id } = params;
     const labours = await query(`
-      SELECT lp.*, c.name as category_name
+      SELECT lp.*, c.name_en as category_name
       FROM labour_profiles lp
       LEFT JOIN categories c ON lp.category_id = c.id
       WHERE lp.id = ?
@@ -128,7 +128,7 @@ export async function PUT(
     await query(updateQuery, updateValues);
 
     const updatedLabour = await query(`
-      SELECT lp.*, c.name as category_name
+      SELECT lp.*, c.name_en as category_name
       FROM labour_profiles lp
       LEFT JOIN categories c ON lp.category_id = c.id
       WHERE lp.id = ?

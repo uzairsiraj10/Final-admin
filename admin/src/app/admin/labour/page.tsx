@@ -203,9 +203,10 @@ export default function LabourPage() {
       header: "Rating",
       cell: ({ row }: any) => {
         const rating = row.getValue("rating");
+        const numericRating = rating ? parseFloat(rating) : 0;
         return (
           <div className="flex items-center">
-            <span className="text-sm font-medium">{rating?.toFixed(1) || "0.0"}</span>
+            <span className="text-sm font-medium">{numericRating.toFixed(1)}</span>
             <span className="text-xs text-gray-500 ml-1">★</span>
           </div>
         );

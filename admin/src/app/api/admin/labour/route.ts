@@ -5,7 +5,7 @@ import { query } from "@/lib/db";
 export async function GET() {
   try {
     const labours = await query(`
-      SELECT lp.*, c.name as category_name
+      SELECT lp.*, c.name_en as category_name
       FROM labour_profiles lp
       LEFT JOIN categories c ON lp.category_id = c.id
       ORDER BY lp.created_at DESC
@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
     );
 
     const newLabour = await query(`
-      SELECT lp.*, c.name as category_name
+      SELECT lp.*, c.name_en as category_name
       FROM labour_profiles lp
       LEFT JOIN categories c ON lp.category_id = c.id
       WHERE lp.id = ?

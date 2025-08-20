@@ -5,7 +5,7 @@ import { query } from "@/lib/db";
 export async function GET() {
   try {
     const categories = await query(`
-      SELECT id, name, name_urdu, description, status, created_at, updated_at
+      SELECT id, name_en as name, name_ur as name_urdu, description_en as description, status, created_at, updated_at
       FROM categories 
       ORDER BY created_at DESC
     `);
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if category already exists
-    const existingCategory = await query("SELECT id FROM categories WHERE name = ?", [name]);
+    const existingCategory = await query("SELECT id FROM categories WHERE name_en = ?", [name]);
     if (existingCategory.length > 0) {
       return NextResponse.json(
         { error: "Category with this name already exists" },
@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
 
     // Insert new category
     const result = await query(
-      "INSERT INTO categories (name, name_urdu, description, status) VALUES (?, ?, ?, ?)",
+      "INSERT INTO categories (name_en, name_ur, description_en, status) VALUES (?, ?, ?, ?)",
       [name, name_urdu || null, description || null, status || "active"]
     );
 
