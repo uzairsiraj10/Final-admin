@@ -1,4 +1,4 @@
-// File: E:\mazdoor\admin\src\app\api\admin\dashboard\activity\route.ts
+// File: D:\mazdoor\admin\src\app\api\admin\dashboard\activity\route.ts
 import * as entry from '../../../../../../../src/app/api/admin/dashboard/activity/route.js'
 import type { NextRequest } from 'next/server.js'
 

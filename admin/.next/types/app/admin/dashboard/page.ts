@@ -1,4 +1,4 @@
-// File: E:\mazdoor\admin\src\app\admin\dashboard\page.tsx
+// File: D:\mazdoor\admin\src\app\admin\dashboard\page.tsx
 import * as entry from '../../../../../src/app/admin/dashboard/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
