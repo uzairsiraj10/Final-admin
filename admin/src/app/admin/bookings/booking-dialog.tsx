@@ -168,12 +168,9 @@ export function BookingDialog({ isOpen, onClose, onSubmit, editingBooking }: Boo
   const handleSubmit = async (data: BookingFormData) => {
     setIsSubmitting(true);
     try {
-      // Convert string values to appropriate types
+      // Don't convert string IDs to numbers as the BookingFormData type expects strings
       const submitData = {
         ...data,
-        customer_id: parseInt(data.customer_id),
-        labour_id: data.labour_id ? parseInt(data.labour_id) : null,
-        category_id: parseInt(data.category_id),
         amount: data.amount || 0,
       };
       await onSubmit(submitData);
