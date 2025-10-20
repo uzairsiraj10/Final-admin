@@ -102,7 +102,12 @@ export async function login(email: string, password: string) {
     [email]
   );
 
-  console.log("[AUTH] DB query result:", user);
+  // Log the raw DB result shape for easier tracing in Vercel logs
+  try {
+    console.log("[AUTH] DB query result:", JSON.stringify(user));
+  } catch (e) {
+    console.log("[AUTH] DB query result (non-serializable):", user);
+  }
 
   if (!user) {
     console.warn("[AUTH] No user found with that email.");
