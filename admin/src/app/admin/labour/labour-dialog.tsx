@@ -46,6 +46,15 @@ const labourSchema = z.object({
 
 type LabourFormData = z.infer<typeof labourSchema>;
 
+// Submission type: allow category_id to be number (converted) and email to be null
+type LabourSubmitData = Omit<LabourFormData, "category_id"> & {
+  category_id: string | number;
+  email?: string | null;
+  rating?: number;
+  experience_years?: number;
+  hourly_rate?: number;
+};
+
 interface Labour {
   id: number;
   name: string;
@@ -69,7 +78,7 @@ interface Category {
 interface LabourDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: LabourFormData) => Promise<void>;
+  onSubmit: (data: LabourSubmitData) => Promise<void>;
   editingLabour: Labour | null;
 }
 
