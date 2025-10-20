@@ -15,29 +15,17 @@ import {
 
 export type DbResult<T> = T extends Promise<infer U> ? U : never;
 
-// Decide whether to use the real DB or the mock.
-// Default to mock when DB_HOST is not configured (prevents build-time connection attempts on Vercel).
-const useMock = !process.env.DB_HOST;
+// Always use the real DB implementation in production. The mock should only be used
+// during local development when deliberately enabled. Ensure you have set DB_* env vars
+// in your deployment (Vercel) so the connection can be established.
+console.log('[DB] Using REAL database implementation (mock disabled)');
 
-if (useMock) {
-  console.warn('[DB] No DB_HOST configured — using mock database (build-safe)');
-} else {
-  console.log('[DB] Using REAL database');
-}
-
-const impl = useMock
-  ? {
-      query: mockQuery,
-      queryOne: mockQueryOne,
-      testConnection: mockTestConnection,
-      closePool: mockCloseConnection,
-    }
-  : {
-      query: simpleQuery,
-      queryOne: simpleQueryOne,
-      testConnection: simpleTestConnection,
-      closePool: simpleCloseConnection,
-    };
+const impl = {
+  query: simpleQuery,
+  queryOne: simpleQueryOne,
+  testConnection: simpleTestConnection,
+  closePool: simpleCloseConnection,
+};
 
 export const query = <T = any>(sql: string, params: any[] = []) => impl.query<T>(sql, params);
 export const queryOne = <T = any>(sql: string, params: any[] = []) => impl.queryOne<T>(sql, params);
@@ -45,9 +33,7 @@ export const testConnection = () => impl.testConnection();
 export const closePool = () => impl.closePool();
 
 export function getPoolStatus() {
-  return useMock
-    ? { connectionType: 'mock', status: 'Using mock DB (no external connection)' }
-    : { connectionType: 'single', connectionLimit: 1, status: 'Using single connection approach for limited hosting' };
+  return { connectionType: 'single', connectionLimit: 1, status: 'Using single connection approach for limited hosting' };
 }
 
 export default { query, queryOne, testConnection, closePool, getPoolStatus };

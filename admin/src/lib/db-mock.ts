@@ -5,7 +5,7 @@ export type DbResult<T> = T extends Promise<infer U> ? U : never;
 const mockUsers = [
   { id: 1, name: "Admin User", email: "admin@mazdoor.com", role: "admin", status: "active", created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
   // common default used by create_admin.js and some scripts
-  { id: 4, name: "Admin User (example)", email: "admin@example.com", role: "admin", status: "active", created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: 4, name: "Admin User (example)", email: "admin@example.com", role: "admin", status: "active", password_hash: "$2a$10$S2OQN5tmGGzgsQ6BgfmYmOoeGovsVSthkgJboFoNic92g6ja5Shn2", created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
   { id: 2, name: "John Doe", email: "john@example.com", role: "customer", status: "active", created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
   { id: 3, name: "Jane Smith", email: "jane@example.com", role: "customer", status: "inactive", created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
 ];
