@@ -47,7 +47,10 @@ export async function POST(request: NextRequest) {
       [name, name_urdu || null, description || null, status || "active"]
     );
 
-    const newCategory = await query("SELECT * FROM categories WHERE id = ?", [result.insertId]);
+    const idResult: any = await query(`SELECT LAST_INSERT_ID() as id`);
+    const insertedId = idResult?.[0]?.id;
+
+    const newCategory = await query("SELECT * FROM categories WHERE id = ?", [insertedId]);
 
     return NextResponse.json(newCategory[0], { status: 201 });
   } catch (error) {

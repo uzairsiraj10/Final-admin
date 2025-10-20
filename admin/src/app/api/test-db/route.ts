@@ -4,17 +4,10 @@ import { hashPassword, verifyPassword } from '../../../lib/auth';
 
 export async function GET() {
   try {
-    const connection = await pool.getConnection();
-    try {
-      // Get all users (only id and email for security)
-      const [users] = await connection.execute(
-        'SELECT id, email FROM users'
-      );
-      
-      return NextResponse.json({ users });
-    } finally {
-      connection.release();
-    }
+    // Use the query wrapper to fetch users
+    const users = await pool.query('SELECT id, email FROM users');
+    return NextResponse.json({ users });
+  
   } catch (error: any) {
     console.error('Database test error:', error);
     return NextResponse.json(

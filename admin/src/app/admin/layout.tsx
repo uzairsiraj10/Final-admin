@@ -163,7 +163,11 @@ export default function AdminLayout({
                 <span>Admin</span>
                 <span>/</span>
                 <span className="font-medium text-gray-900 dark:text-white">
-                  {pathname.split('/').pop()?.charAt(0).toUpperCase() + pathname.split('/').pop()?.slice(1)}
+                  {(() => {
+                    const last = pathname.split("/").pop();
+                    if (!last) return "";
+                    return last.charAt(0).toUpperCase() + last.slice(1);
+                  })()}
                 </span>
               </div>
             </div>

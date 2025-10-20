@@ -153,7 +153,7 @@ export function UserDialog({ open, onOpenChange, user, onSubmit }: UserDialogPro
           <div className="space-y-2">
             <Label htmlFor="role">Role *</Label>
             <Select 
-              onValueChange={(value) => setValue("role", value as "admin" | "staff")}
+              onValueChange={(value: string) => setValue("role", value as "admin" | "staff")}
               value={watch("role")}
             >
               <SelectTrigger className={errors.role ? "border-red-500 focus:border-red-500" : ""}>
@@ -174,7 +174,7 @@ export function UserDialog({ open, onOpenChange, user, onSubmit }: UserDialogPro
           <div className="space-y-2">
             <Label htmlFor="status">Status *</Label>
             <Select 
-              onValueChange={(value) => setValue("status", value as "active" | "suspended")}
+              onValueChange={(value: string) => setValue("status", value as "active" | "suspended")}
               value={watch("status")}
             >
               <SelectTrigger className={errors.status ? "border-red-500 focus:border-red-500" : ""}>

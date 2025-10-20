@@ -79,7 +79,7 @@ export default function SettingsPage() {
           <CardContent className="p-6 space-y-6">
             <div className="space-y-2">
               <Label htmlFor="theme">Theme Preference</Label>
-              <Select value={theme} onValueChange={(value) => setTheme(value)}>
+              <Select value={theme} onValueChange={(value: string) => setTheme(value)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select theme" />
                 </SelectTrigger>
@@ -93,7 +93,7 @@ export default function SettingsPage() {
 
             <div className="space-y-2">
               <Label htmlFor="language">Language</Label>
-              <Select value={language} onValueChange={setLanguage}>
+              <Select value={language} onValueChange={(value: string) => setLanguage(value)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select language" />
                 </SelectTrigger>

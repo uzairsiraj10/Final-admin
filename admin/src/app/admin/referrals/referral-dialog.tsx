@@ -240,7 +240,7 @@ export function ReferralDialog({ open, onOpenChange, referral, onSuccess }: Refe
               <div className="space-y-2">
                 <Label htmlFor="referred_category">Category *</Label>
                 <Select 
-                  onValueChange={(value) => setValue("referred_category", value)}
+                  onValueChange={(value: string) => setValue("referred_category", value)}
                   value={watch("referred_category")}
                 >
                   <SelectTrigger className={errors.referred_category ? "border-red-500 focus:border-red-500" : ""}>
@@ -266,7 +266,7 @@ export function ReferralDialog({ open, onOpenChange, referral, onSuccess }: Refe
             <div className="space-y-2">
               <Label htmlFor="status">Status *</Label>
               <Select 
-                onValueChange={(value) => setValue("status", value as "pending" | "contacted" | "registered" | "rejected")}
+                onValueChange={(value: string) => setValue("status", value as "pending" | "contacted" | "registered" | "rejected")}
                 value={watch("status")}
               >
                 <SelectTrigger className={errors.status ? "border-red-500 focus:border-red-500" : ""}>

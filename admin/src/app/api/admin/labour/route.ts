@@ -73,12 +73,16 @@ export async function POST(request: NextRequest) {
       ]
     );
 
+    // Retrieve last insert id (compatible with our query wrapper)
+    const idResult: any = await query(`SELECT LAST_INSERT_ID() as id`);
+    const insertedId = idResult?.[0]?.id;
+
     const newLabour = await query(`
       SELECT lp.*, c.name_en as category_name
       FROM labour_profiles lp
       LEFT JOIN categories c ON lp.category_id = c.id
       WHERE lp.id = ?
-    `, [result.insertId]);
+    `, [insertedId]);
 
     return NextResponse.json(newLabour[0], { status: 201 });
   } catch (error) {

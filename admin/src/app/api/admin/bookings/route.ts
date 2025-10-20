@@ -75,6 +75,8 @@ export async function POST(request: NextRequest) {
         // Note: address field will be ignored as it doesn't exist in bookings table
       ]
     );
+    const idResult: any = await query(`SELECT LAST_INSERT_ID() as id`);
+    const insertedId = idResult?.[0]?.id;
 
     const newBooking = await query(`
       SELECT 
@@ -88,7 +90,7 @@ export async function POST(request: NextRequest) {
       LEFT JOIN labour_profiles lp ON b.labour_id = lp.id
       LEFT JOIN categories c ON b.category_id = c.id
       WHERE b.id = ?
-    `, [result.insertId]);
+  `, [insertedId]);
 
     return NextResponse.json(newBooking[0], { status: 201 });
   } catch (error) {

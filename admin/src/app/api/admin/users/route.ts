@@ -51,7 +51,10 @@ export async function POST(request: NextRequest) {
       [name, email, hashedPassword, role || "staff", status || "active"]
     );
 
-    const newUser = await query("SELECT id, name, email, role, status, created_at FROM users WHERE id = ?", [result.insertId]);
+    const idResult: any = await query(`SELECT LAST_INSERT_ID() as id`);
+    const insertedId = idResult?.[0]?.id;
+
+    const newUser = await query("SELECT id, name, email, role, status, created_at FROM users WHERE id = ?", [insertedId]);
 
     return NextResponse.json(newUser[0], { status: 201 });
   } catch (error) {

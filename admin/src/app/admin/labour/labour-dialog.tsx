@@ -47,7 +47,10 @@ const labourSchema = z.object({
 type LabourFormData = z.infer<typeof labourSchema>;
 
 // Submission type: allow category_id to be number (converted) and email to be null
-type LabourSubmitData = Omit<LabourFormData, "category_id"> & {
+// Remove `category_id` and `email` from the inferred form type then re-add
+// them with the shapes we need for submission (category may be numeric,
+// and email may be null when omitted).
+type LabourSubmitData = Omit<LabourFormData, "category_id" | "email"> & {
   category_id: string | number;
   email?: string | null;
   rating?: number;
@@ -159,7 +162,7 @@ export function LabourDialog({ isOpen, onClose, onSubmit, editingLabour }: Labou
         rating: data.rating || 0,
         experience_years: data.experience_years || 0,
         hourly_rate: data.hourly_rate || 0,
-        email: data.email || null,
+        email: data.email || undefined,
       };
       await onSubmit(submitData);
     } finally {
