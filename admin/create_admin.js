@@ -2,12 +2,14 @@ const mysql = require('mysql2/promise');
 const bcrypt = require('bcryptjs');
 
 async function createAdminUser() {
+  // Read DB connection from environment variables so this script can run
+  // against any environment (local or production) without editing the file.
   const pool = mysql.createPool({
-    host: '198.38.90.50',
-    port: 3306,
-    database: 'bolalooc_mazdoor',
-    user: 'bolalooc_maz123',
-    password: 'EsbER0JeytIXlp40',
+    host: process.env.DB_HOST || '198.38.90.50',
+    port: parseInt(process.env.DB_PORT || '3306', 10),
+    database: process.env.DB_NAME || 'bolalooc_mazdoor',
+    user: process.env.DB_USER || 'bolalooc_maz123',
+    password: process.env.DB_PASS || 'EsbER0JeytIXlp40',
     waitForConnections: true,
     connectionLimit: 1,
     queueLimit: 0,
@@ -20,10 +22,11 @@ async function createAdminUser() {
     await pool.query('SELECT 1');
     console.log('Database connection successful!');
 
-    // Generate bcrypt hash for 'Admin@123'
-    const password = 'Admin@123';
+  // Admin credentials can be provided via environment variables.
+  const adminEmail = process.env.ADMIN_EMAIL || 'admin@example.com';
+  const password = process.env.ADMIN_PASSWORD || 'Admin@123';
     const hash = await bcrypt.hash(password, 10);
-    console.log('Generated bcrypt hash for Admin@123:', hash);
+  console.log('Generated bcrypt hash for admin password (hidden)');
     
     // Verify the hash works
     const isValid = await bcrypt.compare(password, hash);
@@ -51,7 +54,7 @@ async function createAdminUser() {
         password_hash = VALUES(password_hash),
         role = VALUES(role)
     `, [
-      'admin@example.com',
+      adminEmail,
       hash,
       'Admin User',
       'admin'
@@ -61,7 +64,7 @@ async function createAdminUser() {
     console.log('Result:', result);
     
     // Verify the user was created
-    const [users] = await pool.query('SELECT id, email, name, role FROM users WHERE email = ?', ['admin@example.com']);
+  const [users] = await pool.query('SELECT id, email, name, role FROM users WHERE email = ?', [adminEmail]);
     console.log('Created user:', users[0]);
     
   } catch (error) {
